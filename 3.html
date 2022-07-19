@@ -1,0 +1,50 @@
+<html>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js" integrity="sha512-0f7Ahsuvr+/P2btTY4mZIw9Vl23lS6LY/Y7amdkmUg2dqsUF+cTe4QjWvj/NIBHJoGksOiqndKQuI9yzn2hB0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        #outgoing {
+            width: 600px;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+    </style>
+    <form>
+        <textarea id="incoming"></textarea>
+        <button type="submit">submit</button>
+    </form>
+    <textarea id="data"></textarea>
+    <button onclick="p.send(document.getElementById('data').value)">send</button>
+    <pre id="message"></pre>
+    <pre id="outgoing"></pre>
+    <script>
+        const p = new SimplePeer({
+            initiator: location.hash === '#1',
+            trickle: false
+        })
+
+        p.on('error', err => console.log('error', err))
+
+        p.on('signal', data => {
+            console.log('SIGNAL', JSON.stringify(data))
+            document.querySelector('#outgoing').textContent = JSON.stringify(data)
+        })
+
+        document.querySelector('form').addEventListener('submit', ev => {
+            ev.preventDefault()
+            p.signal(JSON.parse(document.querySelector('#incoming').value))
+        })
+
+        p.on('connect', () => {
+            console.log('CONNECT')
+            p.send('whatever' + Math.random())
+        })
+
+        p.on('data', data => {
+            document.getElementById('message').innerHTML += data
+            console.log('data: ' + data)
+        })
+    </script>
+</body>
+
+</html>
