@@ -117,6 +117,13 @@ function receivedMessage(msg) {
             <div class="divider my-0"></div> 
         `
 
+    } else if (msg.type == "disconnection") {
+        h.get('#messages').innerHTML += `
+            <div class="font-bold ${msg.host == "true"
+        ? "text-sky-400" : ""}">${msg.name} left</div>
+            <div class="divider my-0"></div> 
+        `
+
     } else if (msg.type == "typingStart") {
         currentlyTyping.push(msg.name)
         rebuildTypingUi()
@@ -158,3 +165,13 @@ class Message {
         this.name = nm || "host"
     }
 }
+
+function disconnect() {
+    var msg = new Message("disconnection")
+    conxs.forEach(conx => {
+        conx.send(msg)
+    })
+
+}
+
+window.onbeforeunload = window.onpagehide = disconnect
