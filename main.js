@@ -40,6 +40,7 @@ function send() {
         <div>${msg.data}</div>
         <div class="divider"></div> 
     `
+    h.get("#messages").scrollTop = h.get("#messages").scrollHeight;
 
 }
 
